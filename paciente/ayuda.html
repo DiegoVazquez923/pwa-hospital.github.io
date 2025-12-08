@@ -91,7 +91,7 @@
         };
 
         try {
-            const response = await fetch('https://back-pwa-docker.onrender.com/api/paciente/patch-token', {
+            const response = await fetch('http://hospital-back-integradora-env.eba-psdwrt3p.us-east-1.elasticbeanstalk.com/api/paciente/patch-token', {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
@@ -116,7 +116,7 @@
         const userId = localStorage.getItem('userId');
 
         try {
-            const response = await fetch('https://back-pwa-docker.onrender.com/api/alertas/solicitar', {
+            const response = await fetch('http://hospital-back-integradora-env.eba-psdwrt3p.us-east-1.elasticbeanstalk.com/api/alertas/solicitar', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ idPaciente: userId })
