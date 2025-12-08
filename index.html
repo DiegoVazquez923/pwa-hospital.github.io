@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Connect - Iniciar Sesión</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <style>
+        /* Estilos generales y reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Fondo del cuerpo (ahora con blanco) */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #ffffff;
+            /* Fondo totalmente blanco */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Contenedor principal de login con un toque de azul */
+        .login-container {
+            background: #f8f9fa;
+            /* Gris muy claro */
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            max-width: 380px;
+            width: 90%;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+
+        .login-container h2 {
+            color: #182848;
+            margin-bottom: 25px;
+            font-size: 24px;
+        }
+
+        /* Estilo de los campos de entrada */
+        .login-container input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .login-container input:focus {
+            border-color: #4b6cb7;
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(75, 108, 183, 0.25);
+        }
+
+        /* Estilo del botón principal */
+        .login-container button {
+            width: 100%;
+            padding: 12px;
+            background: #4b6cb7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: background 0.3s, transform 0.1s;
+        }
+
+        .login-container button:hover {
+            background: #3b5a9b;
+        }
+
+        /* Enlace de recuperación de contraseña */
+        .recovery-link {
+            display: block;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #4b6cb7;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .recovery-link:hover {
+            text-decoration: underline;
+        }
+
+        #messageArea {
+            margin-top: 15px;
+            font-size: 14px;
+            min-height: 20px;
+        }
+
+        .success-message {
+            color: green;
+        }
+
+        .error-message {
+            color: red;
+        }
+
+        /* Estilos específicos para la forma de recuperación */
+        #recoveryForm p {
+            margin-bottom: 15px;
+            color: #6c757d;
+            font-size: 15px;
+        }
+    </style>
+</head>
+
+
+<body>
+    <div class="login-container">
+        <h2 id="formTitle">🏥 Acceso al Sistema</h2>
+
+        <div id="loginForm">
+            <input type="text" id="userInput" placeholder="ID de Usuario">
+            <input type="password" id="passwordInput" placeholder="Contraseña">
+            <button onclick="generalLogin()">Entrar</button>
+            <a onclick="showRecoveryForm()" class="recovery-link">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <div id="recoveryForm" style="display: none;">
+            <p>Ingresa tu ID de usuario para simular la solicitud de restablecimiento.</p>
+            <input type="text" id="recoveryIdInput" placeholder="ID de Usuario">
+            <button onclick="recoverPassword()">Restablecer Contraseña</button>
+            <a onclick="showLoginForm()" class="recovery-link">Volver al inicio de sesión</a>
+        </div>
+
+        <p id="messageArea"></p>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module">
+        import { getFCMToken } from './app.js';
+        
+        const messageArea = document.getElementById('messageArea');
+
+        window.generalLogin = async function() {
+            const userId = document.getElementById('userInput').value.trim();
+            const password = document.getElementById('passwordInput').value.trim();
+
+            const user = {
+                "usuario": userId,
+                "password": password
+            }
+            messageArea.textContent = '';
+
+            try {
+                const response = await fetch('https://back-pwa-docker.onrender.com/api/auth/signin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(user)
+                })
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'error',
+                        title: 'Usuario o contraseña incorrectos',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        background: '#323232',
+                        color: '#fff'
+                    });
+                    return;
+                }
+
+                console.log("data", data.data.token);
+                // Guardar el token de autenticación
+                localStorage.setItem('authToken', data.data.token);
+                localStorage.setItem('userRole', data.data.roles[0]);
+                console.log("userRole", data.data.roles[0]);
+                localStorage.setItem("username", data.data.correo);
+                localStorage.setItem("userId", data.data.id);
+                
+                // ✅ OBTENER Y GUARDAR TOKEN FCM
+                const fcmToken = await getFCMToken();
+                if (fcmToken) {
+                    console.log('Token FCM obtenido y guardado:', fcmToken);
+                    
+                    
+                }
+                
+                const role = data.data.roles[0];
+                
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Inicio de sesión exitoso',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    background: '#323232',
+                    color: '#fff'
+                });
+
+                switch(role.authority){
+                    case 'ROLE_ISLA':
+                        window.location.href = './isla/index.html';
+                        break;
+                    case 'ROLE_ENFERMERO':
+                        window.location.href = './enfermero/index.html';
+                        break;
+                    case 'ROLE_PACIENTE':
+                        window.location.href = './paciente/ayuda.html';
+                        break;
+                    default:
+                        console.error('Rol de usuario no reconocido');
+                }
+            } catch (error) {
+                console.error('Error en la solicitud:', error);
+            }
+        }
+
+        // --- Funciones de recuperación de contraseña ---
+        window.showRecoveryForm = function() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('recoveryForm').style.display = 'block';
+            document.getElementById('formTitle').textContent = 'Recuperar Contraseña';
+            messageArea.textContent = '';
+            document.getElementById('recoveryIdInput').value = '';
+        }
+
+        window.showLoginForm = function() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('recoveryForm').style.display = 'none';
+            document.getElementById('formTitle').textContent = '🏥 Acceso al Sistema';
+            messageArea.textContent = '';
+        }
+
+        window.recoverPassword = function() {
+            const recoveryId = document.getElementById('recoveryIdInput').value.trim();
+            messageArea.textContent = '';
+
+            if (!recoveryId) {
+                messageArea.textContent = 'Por favor, ingresa tu ID de usuario.';
+                messageArea.className = 'error-message';
+                return;
+            }
+
+            messageArea.className = 'success-message';
+            messageArea.textContent = `✅ Solicitud enviada para el usuario ${recoveryId}. Revisa tu correo electrónico.`;
+
+            setTimeout(() => {
+                window.showLoginForm();
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>
