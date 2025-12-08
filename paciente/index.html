@@ -316,7 +316,7 @@
                 // Crear el registro paciente-cama
                 console.log(IdUser, camaId);
 
-                const res = await fetch('http://hospital-back-integradora-env.eba-psdwrt3p.us-east-1.elasticbeanstalk.com/api/pc/new-pc', {
+                const res = await fetch('https://corsproxy.io/?http://hospital-back-integradora-env.eba-psdwrt3p.us-east-1.elasticbeanstalk.com/api/auth/signin/api/pc/new-pc', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
