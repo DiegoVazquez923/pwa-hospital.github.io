@@ -36,7 +36,7 @@ async function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
     try {
       // 🔥 CAMBIO: Ruta relativa para GitHub Pages
-      swReg = await navigator.serviceWorker.register('/pwa-front/firebase-messaging-sw.js', {
+      swReg = await navigator.serviceWorker.register('./firebase-messaging-sw.js', {
         scope: './'
       });
       console.log('Service Worker registrado:', swReg);
