@@ -878,7 +878,7 @@
             };
 
             try {
-                const response = await fetch('https://back-pwa-docker.onrender.com/api/isla/patch-token', {
+                const response = await fetch('https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/isla/patch-token', {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json'
@@ -910,7 +910,7 @@
                 // Cargar select de islas
                 populateSelect(
                     "nurseIsland",
-                    "https://back-pwa-docker.onrender.com/api/isla/",
+                    "https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/isla/",
                     i => i.usuario || `Isla ${i.numero}`, // texto de opción
                     "No hay islas disponibles"
                 );
@@ -972,7 +972,7 @@
             const token = localStorage.getItem('authToken');
 
             try {
-                const response = await fetch('https://back-pwa-docker.onrender.com/api/isla/new-isla', {
+                const response = await fetch('https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/isla/new-isla', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1013,7 +1013,7 @@
             select.innerHTML = `<option value="">Cargando...</option>`;
 
             try {
-                const resp = await fetch("https://back-pwa-docker.onrender.com/api/isla/", {
+                const resp = await fetch("https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/isla/", {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': 'Bearer ' + token
@@ -1090,7 +1090,7 @@
             };
 
             try {
-                const response = await fetch('https://back-pwa-docker.onrender.com/api/enfermero/new-enfermero', {
+                const response = await fetch('https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/enfermero/new-enfermero', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1137,7 +1137,7 @@
             const token = localStorage.getItem('authToken');
 
             try {
-                const response = await fetch('https://back-pwa-docker.onrender.com/api/pc/', {
+                const response = await fetch('https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/pc/', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1232,7 +1232,7 @@
             const container = document.getElementById("bedsManagementContainer");
 
             try {
-                const response = await fetch(`https://back-pwa-docker.onrender.com/api/isla/detalle/${islaId}`, {
+                const response = await fetch(`https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/isla/detalle/${islaId}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1299,7 +1299,7 @@
             const container = document.getElementById("nursesContainer");
 
             try {
-                const response = await fetch(`https://back-pwa-docker.onrender.com/api/isla/detalle/${islaId}`, {
+                const response = await fetch(`https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/isla/detalle/${islaId}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1361,7 +1361,7 @@
             container.innerHTML = `<p class="text-center text-muted w-100">Cargando...</p>`;
 
             try {
-                const resp = await fetch('https://back-pwa-docker.onrender.com/api/paciente/', {
+                const resp = await fetch('https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/paciente/', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1451,7 +1451,7 @@
             };
 
             try {
-                const resp = await fetch('https://back-pwa-docker.onrender.com/api/paciente/save', {
+                const resp = await fetch('https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/paciente/save', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1478,7 +1478,7 @@
         async function showBedQR(id) {
             try {
                 // Llamada al servicio que retorna el QR como imagen
-                const response = await fetch(`https://back-pwa-docker.onrender.com/api/qr/image/${id}`);
+                const response = await fetch(`https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/qr/image/${id}`);
 
                 if (!response.ok) {
                     throw new Error("Error al obtener el QR");
@@ -1546,7 +1546,7 @@
 
             try {
                 // Intentamos llamar a un endpoint de alta; ajustar si tu API difiere
-                const resp = await fetch(`https://back-pwa-docker.onrender.com/api/paciente/alta/${pcId}`, {
+                const resp = await fetch(`https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/paciente/alta/${pcId}`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1645,7 +1645,7 @@
 
             try {
                 // 1️⃣ Enfermeros
-                const enfermerosResp = await fetch(`https://back-pwa-docker.onrender.com/api/enfermero/isla/${idIsla}`, {
+                const enfermerosResp = await fetch(`https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/enfermero/isla/${idIsla}`, {
                     headers: {
                         "Authorization": `Bearer ${token}`,
                         "Content-Type": "application/json"
@@ -1659,7 +1659,7 @@
                     : `<option value="">No hay enfermeros disponibles</option>`;
 
                 // 2️⃣ Camas disponibles
-                const camasResp = await fetch(`https://back-pwa-docker.onrender.com/api/cama/disponibles/isla/${idIsla}`, {
+                const camasResp = await fetch(`https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/cama/disponibles/isla/${idIsla}`, {
                     headers: {
                         "Authorization": `Bearer ${token}`,
                         "Content-Type": "application/json"
@@ -1704,7 +1704,7 @@
             };
 
             try {
-                const resp = await fetch(`https://back-pwa-docker.onrender.com/api/e-c/asignar`, {
+                const resp = await fetch(`https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/e-c/asignar`, {
                     method: "POST",
                     headers: {
                         "Authorization": `Bearer ${token}`,
@@ -1746,7 +1746,7 @@
             };
 
             try {
-                const response = await fetch('https://back-pwa-docker.onrender.com/api/cama/new-cama', {
+                const response = await fetch('https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/cama/new-cama', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1797,7 +1797,7 @@
             container.innerHTML = `<p class="text-center text-muted w-100">Cargando...</p>`;
 
             try {
-                const resp = await fetch("https://back-pwa-docker.onrender.com/api/isla/", {
+                const resp = await fetch("https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/isla/", {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
                 const json = await resp.json();
