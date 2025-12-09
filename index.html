@@ -158,6 +158,7 @@
                 const response = await fetch('https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/auth/signin', {
                     method: 'POST',
                     headers: {
+                        'ngrok-skip-browser-warning': 'true',
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(user)

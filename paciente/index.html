@@ -319,6 +319,7 @@
                 const res = await fetch('https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/pc/new-pc', {
                     method: 'POST',
                     headers: {
+                        'ngrok-skip-browser-warning': 'true',
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },

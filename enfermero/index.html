@@ -415,6 +415,7 @@
                 const response = await fetch(`https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/enfermero/camas/${IdUser}`, {
                     method: 'GET',
                     headers: {
+                        'ngrok-skip-browser-warning': 'true',
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     }
@@ -574,6 +575,7 @@
                 const response = await fetch(`https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/pc/find-pc/${camaId}`, {
                     method: 'GET',
                     headers: {
+                        'ngrok-skip-browser-warning': 'true',
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     }
@@ -681,7 +683,7 @@
             try {
                 const response = await fetch('https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/enfermero/patch-token', {
                     method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'ngrok-skip-browser-warning': 'true','Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
 
