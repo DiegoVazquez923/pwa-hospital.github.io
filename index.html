@@ -7,28 +7,28 @@
     <title>Hospital Connect - Iniciar Sesión</title>
     <link rel="manifest" href="manifest.webmanifest">
     <style>
-        /* Estilos generales y reset */
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        /* Fondo del cuerpo (ahora con blanco) */
+        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #ffffff;
-            /* Fondo totalmente blanco */
+            
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        /* Contenedor principal de login con un toque de azul */
+       
         .login-container {
             background: #f8f9fa;
-            /* Gris muy claro */
+           
             padding: 40px;
             border-radius: 15px;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
@@ -44,7 +44,7 @@
             font-size: 24px;
         }
 
-        /* Estilo de los campos de entrada */
+        
         .login-container input {
             width: 100%;
             padding: 12px;
@@ -61,7 +61,7 @@
             box-shadow: 0 0 0 0.2rem rgba(75, 108, 183, 0.25);
         }
 
-        /* Estilo del botón principal */
+        
         .login-container button {
             width: 100%;
             padding: 12px;
@@ -79,7 +79,7 @@
             background: #3b5a9b;
         }
 
-        /* Enlace de recuperación de contraseña */
+        
         .recovery-link {
             display: block;
             margin-top: 15px;
@@ -107,7 +107,7 @@
             color: red;
         }
 
-        /* Estilos específicos para la forma de recuperación */
+       
         #recoveryForm p {
             margin-bottom: 15px;
             color: #6c757d;
@@ -182,14 +182,14 @@
                 }
 
                 console.log("data", data.data.token);
-                // Guardar el token de autenticación
+                
                 localStorage.setItem('authToken', data.data.token);
                 localStorage.setItem('userRole', data.data.roles[0]);
                 console.log("userRole", data.data.roles[0]);
                 localStorage.setItem("username", data.data.correo);
                 localStorage.setItem("userId", data.data.id);
                 
-                // ✅ OBTENER Y GUARDAR TOKEN FCM
+                
                 const fcmToken = await getFCMToken();
                 if (fcmToken) {
                     console.log('Token FCM obtenido y guardado:', fcmToken);
