@@ -804,19 +804,7 @@
             el.className = `camera-status status-${type}`;
         }
 
-        async function PatchToken() {
-            const fcmToken = localStorage.getItem('fcmToken');
-            const IdUser = localStorage.getItem('userId');
-            try {
-                await fetch('https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/enfermero/patch-token', {
-                    method: 'PATCH',
-                    headers: { 'ngrok-skip-browser-warning': 'true', 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: IdUser, token: fcmToken })
-                });
-            } catch (error) {
-                console.error(error);
-            }
-        }
+       
 
         function logout() {
             if (autoRefreshInterval) clearInterval(autoRefreshInterval);
