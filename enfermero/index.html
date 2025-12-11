@@ -1,17 +1,24 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enfermero - Panel de Control</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #f5f7fa;
             padding: 20px;
         }
+
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -20,13 +27,19 @@
             margin-bottom: 25px;
             box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
         }
-        .header h1 { font-size: 28px; margin-bottom: 5px; }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
             margin-bottom: 25px;
         }
+
         .stat-card {
             background: white;
             padding: 20px;
@@ -34,7 +47,11 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             transition: transform 0.2s;
         }
-        .stat-card:hover { transform: translateY(-2px); }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
         .stat-card h3 {
             font-size: 13px;
             color: #666;
@@ -42,28 +59,37 @@
             text-transform: uppercase;
             font-weight: 600;
         }
+
         .stat-card .number {
             font-size: 32px;
             font-weight: bold;
             color: #667eea;
         }
-        .notifications, .assigned-beds, .requests-panel {
+
+        .notifications,
+        .assigned-beds,
+        .requests-panel {
             background: white;
             border-radius: 12px;
             padding: 25px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             margin-bottom: 25px;
         }
-        .notifications h2, .assigned-beds h2, .requests-panel h2 {
+
+        .notifications h2,
+        .assigned-beds h2,
+        .requests-panel h2 {
             font-size: 20px;
             margin-bottom: 20px;
             color: #333;
         }
+
         .beds-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 15px;
         }
+
         .bed-card {
             background: #f8f9fa;
             border: 2px solid #e9ecef;
@@ -73,26 +99,41 @@
             transition: all 0.3s ease;
             position: relative;
         }
+
         .bed-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
         }
+
         .bed-card.urgent {
             border-color: #dc3545;
             background: #fff5f5;
             animation: pulse 2s infinite;
         }
+
         @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4); }
-            50% { box-shadow: 0 0 0 8px rgba(220, 53, 69, 0); }
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 0 8px rgba(220, 53, 69, 0);
+            }
         }
+
         .bed-card .bed-num {
             font-size: 24px;
             font-weight: bold;
             color: #667eea;
             margin-bottom: 10px;
         }
-        .bed-card.urgent .bed-num { color: #dc3545; }
+
+        .bed-card.urgent .bed-num {
+            color: #dc3545;
+        }
+
         .alert-badge {
             position: absolute;
             top: -8px;
@@ -104,6 +145,7 @@
             font-size: 12px;
             font-weight: bold;
         }
+
         .time-badge {
             background: #ffc107;
             color: #333;
@@ -114,11 +156,13 @@
             margin-top: 5px;
             display: inline-block;
         }
+
         .empty-state {
             text-align: center;
             padding: 40px;
             color: #999;
         }
+
         .logout-btn {
             position: fixed;
             top: 20px;
@@ -133,6 +177,7 @@
             z-index: 10;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
+
         .modal {
             position: fixed;
             top: 0;
@@ -145,7 +190,11 @@
             align-items: center;
             z-index: 100;
         }
-        .modal.active { display: flex; }
+
+        .modal.active {
+            display: flex;
+        }
+
         .modal-content {
             background: white;
             padding: 30px;
@@ -155,22 +204,45 @@
             max-height: 90vh;
             overflow-y: auto;
         }
+
         #qrReader {
             border-radius: 15px;
             overflow: hidden;
             border: 4px solid #667eea;
             margin: 20px 0;
         }
+
         .camera-status {
             padding: 15px;
             border-radius: 10px;
             margin: 15px 0;
             font-weight: 500;
         }
-        .status-loading { background: #fff3cd; color: #856404; border: 2px solid #ffc107; }
-        .status-ready { background: #d1ecf1; color: #0c5460; border: 2px solid #17a2b8; }
-        .status-success { background: #d4edda; color: #155724; border: 2px solid #28a745; }
-        .status-error { background: #f8d7da; color: #721c24; border: 2px solid #dc3545; }
+
+        .status-loading {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffc107;
+        }
+
+        .status-ready {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 2px solid #17a2b8;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #28a745;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #dc3545;
+        }
+
         .btn {
             padding: 10px 20px;
             border: none;
@@ -180,17 +252,39 @@
             transition: all 0.3s;
             margin: 5px;
         }
-        .btn-primary { background: #667eea; color: white; }
-        .btn-secondary { background: #6c757d; color: white; }
-        .btn-danger { background: #dc3545; color: white; }
-        .btn-success { background: #28a745; color: white; }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
         .info-section {
             background: #f8f9fa;
             padding: 20px;
             border-radius: 10px;
             margin: 15px 0;
         }
-        .info-section h4 { color: #667eea; margin-bottom: 15px; }
+
+        .info-section h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
         .info-item {
             margin: 10px 0;
             padding: 10px;
@@ -198,6 +292,7 @@
             border-radius: 5px;
             border-left: 3px solid #667eea;
         }
+
         .request-item {
             background: #fff5f5;
             border-left: 4px solid #dc3545;
@@ -208,25 +303,40 @@
             justify-content: space-between;
             align-items: center;
         }
+
         .request-item.attended {
             background: #d4edda;
             border-left-color: #28a745;
             opacity: 0.7;
         }
+
         .request-info .bed-number {
             font-size: 18px;
             font-weight: bold;
             color: #dc3545;
         }
-        .request-item.attended .bed-number { color: #28a745; }
+
+        .request-item.attended .bed-number {
+            color: #28a745;
+        }
+
         .badge {
             padding: 5px 10px;
             border-radius: 5px;
             font-size: 12px;
             font-weight: bold;
         }
-        .badge-pending { background: #ffc107; color: #333; }
-        .badge-attended { background: #28a745; color: white; }
+
+        .badge-pending {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .badge-attended {
+            background: #28a745;
+            color: white;
+        }
+
         .permission-guide {
             background: #e7f3ff;
             border: 2px solid #2196F3;
@@ -234,6 +344,7 @@
             border-radius: 10px;
             margin: 20px 0;
         }
+
         .sync-indicator {
             position: fixed;
             bottom: 20px;
@@ -247,7 +358,11 @@
             align-items: center;
             gap: 8px;
         }
-        .sync-indicator.active { display: flex; }
+
+        .sync-indicator.active {
+            display: flex;
+        }
+
         .spinner {
             width: 12px;
             height: 12px;
@@ -256,11 +371,15 @@
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
+
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
+
 <body>
     <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
 
@@ -442,7 +561,7 @@
             requestsList.innerHTML = solicitudes.map(req => {
                 const fecha = new Date(req.fecha);
                 const diffMin = Math.floor((new Date() - fecha) / 60000);
-                let tiempo = diffMin < 1 ? 'Ahora' : diffMin < 60 ? `${diffMin}min` : `${Math.floor(diffMin/60)}h`;
+                let tiempo = diffMin < 1 ? 'Ahora' : diffMin < 60 ? `${diffMin}min` : `${Math.floor(diffMin / 60)}h`;
                 return `
                     <div class="request-item ${req.atendida ? 'attended' : ''}">
                         <div class="request-info">
@@ -514,7 +633,7 @@
 
         async function closeQRScanner() {
             if (html5QrCode) {
-                try { await html5QrCode.stop(); } catch (err) {}
+                try { await html5QrCode.stop(); } catch (err) { }
             }
             document.getElementById('qrScannerModal').classList.remove('active');
             isScanning = false;
@@ -522,22 +641,46 @@
 
         async function initQRScanner() {
             try {
-                updateCameraStatus("Iniciando cámara...", "loading");
+                updateCameraStatus("Solicitando permisos de cámara...", "loading");
+
                 html5QrCode = new Html5Qrcode("qrReader");
+
+                const config = {
+                    fps: 30,
+                    qrbox: { width: 300, height: 300 },
+                    aspectRatio: 1.0,
+                    disableFlip: false,
+                    experimentalFeatures: { useBarCodeDetectorIfSupported: true },
+                    showTorchButtonIfSupported: true,
+                    formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE]
+                };
+
                 await html5QrCode.start(
                     { facingMode: "environment" },
-                    { fps: 30, qrbox: 300 },
-                    (decodedText) => onQRCodeScanned(decodedText),
-                    () => {}
+                    config,
+                    (decodedText) => {
+                        onQRCodeScanned(decodedText);
+                    },
+                    (errorMessage) => {
+                        // errores menores no críticos
+                    }
                 );
+
                 isScanning = true;
-                updateCameraStatus("✅ Cámara lista", "ready");
+                updateCameraStatus("✅ Cámara lista. Enfoca el código QR", "ready");
+
             } catch (err) {
-                console.error(err);
+                console.error("Error al iniciar cámara:", err);
+
                 if (err.name === "NotAllowedError") {
-                    document.getElementById("permissionGuide").style.display = "block";
+                    showPermissionDenied();
+                } else if (err.name === "NotFoundError") {
+                    updateCameraStatus("❌ No se encontró ninguna cámara.", "error");
+                } else if (err.name === "NotReadableError") {
+                    updateCameraStatus("❌ La cámara está siendo usada por otra aplicación.", "error");
+                } else {
+                    updateCameraStatus("❌ No se pudo acceder a la cámara.", "error");
                 }
-                updateCameraStatus("❌ Error de cámara", "error");
             }
         }
 
@@ -624,6 +767,28 @@
             document.getElementById('bedInfoModal').classList.remove('active');
         }
 
+        function showPermissionDenied() {
+            updateCameraStatus("❌ Permiso de cámara denegado. Por favor permite el acceso.", "error");
+
+            // Agregar botón de reintento
+            const qrReader = document.getElementById("qrReader");
+            const retryBtnId = "retryCameraBtn";
+
+            if (!document.getElementById(retryBtnId)) {
+                const retryBtn = document.createElement("button");
+                retryBtn.textContent = "🔄 Reintentar cámara";
+                retryBtn.id = retryBtnId;
+                retryBtn.classList.add("btn", "btn-primary");
+                retryBtn.style.display = "block";
+                retryBtn.style.margin = "10px auto";
+                retryBtn.onclick = () => {
+                    retryBtn.remove();
+                    initQRScanner();
+                };
+                qrReader.appendChild(retryBtn);
+            }
+        }
+
         function manualEntry() {
             const camaId = prompt("Ingresa el ID de la cama:");
             if (camaId && !isNaN(camaId)) {
@@ -645,7 +810,7 @@
             try {
                 await fetch('https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/enfermero/patch-token', {
                     method: 'PATCH',
-                    headers: { 'ngrok-skip-browser-warning': 'true','Content-Type': 'application/json' },
+                    headers: { 'ngrok-skip-browser-warning': 'true', 'Content-Type': 'application/json' },
                     body: JSON.stringify({ id: IdUser, token: fcmToken })
                 });
             } catch (error) {
@@ -660,4 +825,5 @@
         }
     </script>
 </body>
+
 </html>
