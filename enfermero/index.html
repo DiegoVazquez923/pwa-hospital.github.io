@@ -1,131 +1,124 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enfermero - Panel de Control</title>
-
-    <!-- QR Scanner -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
-
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #ffffff;
+            background: #f5f7fa;
             padding: 20px;
         }
-
         .header {
-            background: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 25px;
-            border-radius: 10px;
+            border-radius: 15px;
             margin-bottom: 25px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
         }
-
-        .header h1 {
-            font-size: 28px;
-            margin-bottom: 5px;
-        }
-
+        .header h1 { font-size: 28px; margin-bottom: 5px; }
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
             margin-bottom: 25px;
         }
-
         .stat-card {
             background: white;
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s;
         }
-
+        .stat-card:hover { transform: translateY(-2px); }
         .stat-card h3 {
-            font-size: 14px;
+            font-size: 13px;
             color: #666;
             margin-bottom: 10px;
             text-transform: uppercase;
+            font-weight: 600;
         }
-
         .stat-card .number {
             font-size: 32px;
             font-weight: bold;
             color: #667eea;
         }
-
-        .notifications,
-        .assigned-beds {
+        .notifications, .assigned-beds, .requests-panel {
             background: white;
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 25px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             margin-bottom: 25px;
         }
-
-        .notifications h2,
-        .assigned-beds h2 {
+        .notifications h2, .assigned-beds h2, .requests-panel h2 {
             font-size: 20px;
             margin-bottom: 20px;
             color: #333;
         }
-
         .beds-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 15px;
         }
-
         .bed-card {
             background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
             padding: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
+            position: relative;
         }
-
         .bed-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            border-color: #667eea;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
         }
-
-        .bed-card.needs-attention {
-            border-color: #ffc107;
-            background: #fffbf0;
+        .bed-card.urgent {
+            border-color: #dc3545;
+            background: #fff5f5;
+            animation: pulse 2s infinite;
         }
-
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(220, 53, 69, 0); }
+        }
         .bed-card .bed-num {
             font-size: 24px;
             font-weight: bold;
             color: #667eea;
             margin-bottom: 10px;
         }
-
-        .bed-card .patient-info p {
-            font-size: 14px;
-            color: #666;
-            margin: 5px 0;
+        .bed-card.urgent .bed-num { color: #dc3545; }
+        .alert-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
         }
-
+        .time-badge {
+            background: #ffc107;
+            color: #333;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-top: 5px;
+            display: inline-block;
+        }
         .empty-state {
             text-align: center;
             padding: 40px;
             color: #999;
         }
-
         .logout-btn {
             position: fixed;
             top: 20px;
@@ -138,10 +131,8 @@
             cursor: pointer;
             font-weight: bold;
             z-index: 10;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
-
-        /* Modal Base */
         .modal {
             position: fixed;
             top: 0;
@@ -154,11 +145,7 @@
             align-items: center;
             z-index: 100;
         }
-
-        .modal.active {
-            display: flex;
-        }
-
+        .modal.active { display: flex; }
         .modal-content {
             background: white;
             padding: 30px;
@@ -167,55 +154,23 @@
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
-
-        /* Escáner QR */
         #qrReader {
             border-radius: 15px;
             overflow: hidden;
             border: 4px solid #667eea;
             margin: 20px 0;
-            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
         }
-
-        #qrReader video {
-            border-radius: 12px;
-            transform: scaleX(-1);
-            -webkit-transform: scaleX(-1);
-        }
-
         .camera-status {
             padding: 15px;
             border-radius: 10px;
             margin: 15px 0;
             font-weight: 500;
         }
-
-        .status-loading {
-            background: #fff3cd;
-            color: #856404;
-            border: 2px solid #ffc107;
-        }
-
-        .status-ready {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 2px solid #17a2b8;
-        }
-
-        .status-success {
-            background: #d4edda;
-            color: #155724;
-            border: 2px solid #28a745;
-        }
-
-        .status-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 2px solid #dc3545;
-        }
-
+        .status-loading { background: #fff3cd; color: #856404; border: 2px solid #ffc107; }
+        .status-ready { background: #d1ecf1; color: #0c5460; border: 2px solid #17a2b8; }
+        .status-success { background: #d4edda; color: #155724; border: 2px solid #28a745; }
+        .status-error { background: #f8d7da; color: #721c24; border: 2px solid #dc3545; }
         .btn {
             padding: 10px 20px;
             border: none;
@@ -225,43 +180,17 @@
             transition: all 0.3s;
             margin: 5px;
         }
-
-        .btn-primary {
-            background: #667eea;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #5568d3;
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #5a6268;
-        }
-
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-
+        .btn-primary { background: #667eea; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-success { background: #28a745; color: white; }
         .info-section {
             background: #f8f9fa;
             padding: 20px;
             border-radius: 10px;
             margin: 15px 0;
         }
-
-        .info-section h4 {
-            color: #667eea;
-            margin-bottom: 15px;
-            font-size: 18px;
-        }
-
+        .info-section h4 { color: #667eea; margin-bottom: 15px; }
         .info-item {
             margin: 10px 0;
             padding: 10px;
@@ -269,17 +198,71 @@
             border-radius: 5px;
             border-left: 3px solid #667eea;
         }
-
-        .info-item strong {
-            color: #333;
-            display: inline-block;
-            min-width: 150px;
+        .request-item {
+            background: #fff5f5;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .request-item.attended {
+            background: #d4edda;
+            border-left-color: #28a745;
+            opacity: 0.7;
+        }
+        .request-info .bed-number {
+            font-size: 18px;
+            font-weight: bold;
+            color: #dc3545;
+        }
+        .request-item.attended .bed-number { color: #28a745; }
+        .badge {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge-pending { background: #ffc107; color: #333; }
+        .badge-attended { background: #28a745; color: white; }
+        .permission-guide {
+            background: #e7f3ff;
+            border: 2px solid #2196F3;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .sync-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #667eea;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+        .sync-indicator.active { display: flex; }
+        .spinner {
+            width: 12px;
+            height: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
-
 <body>
-    <button class="logout-btn" onclick="logout()">Cerrar</button>
+    <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
 
     <div class="header">
         <h1>👨‍⚕️ Panel de Enfermero</h1>
@@ -291,22 +274,25 @@
             <h3>Camas Asignadas</h3>
             <div class="number" id="totalBeds">0</div>
         </div>
-
         <div class="stat-card">
             <h3>Atendidas Hoy</h3>
             <div class="number" id="attendedToday">0</div>
         </div>
+        <div class="stat-card">
+            <h3>Pendientes</h3>
+            <div class="number" id="pendingRequests">0</div>
+        </div>
     </div>
 
-    <div class="notifications" style="margin-bottom: 30px;">
+    <div class="requests-panel">
+        <h2>🔔 Solicitudes Recibidas Hoy</h2>
+        <div id="requestsList"></div>
+    </div>
+
+    <div class="notifications">
         <h2>🔍 Consultar Información de Cama</h2>
-        <button onclick="openQRScanner()" class="btn btn-primary">
-            📷 Escanear QR de Cama
-        </button>
-        <button onclick="manualEntry()" class="btn btn-secondary">
-            ⌨️ Ingresar Número Manualmente
-        </button>
-        <p id="qrSearchMessage" style="margin-top: 10px;"></p>
+        <button onclick="openQRScanner()" class="btn btn-primary">📷 Escanear QR</button>
+        <button onclick="manualEntry()" class="btn btn-secondary">⌨️ Ingresar Número</button>
     </div>
 
     <div class="assigned-beds">
@@ -314,103 +300,88 @@
         <div class="beds-grid" id="bedsGrid"></div>
     </div>
 
-    <!-- Modal Escáner QR -->
     <div id="qrScannerModal" class="modal">
         <div class="modal-content">
             <h3 style="color: #667eea; margin-bottom: 15px;">📷 Escanear Código QR</h3>
-
-            <p style="color: #666; margin-bottom: 15px;">
-                <strong>💡 Consejos para mejor escaneo:</strong><br>
-                • Mantén el QR dentro del cuadro azul<br>
-                • Asegúrate de tener MUY BUENA iluminación<br>
-                • Mantén el QR a 10-15 cm de la cámara<br>
-                • Mantén el dispositivo estable (sin mover)<br>
-                • Si el QR está en pantalla, aumenta el brillo al máximo<br>
-                • Si es QR impreso, evita reflejos de luz directa
-            </p>
-
-            <div id="cameraStatus" class="camera-status status-loading">
-                <div class="spinner-border spinner-border-sm me-2" role="status"></div>
-                Iniciando cámara...
+            <div id="cameraStatus" class="camera-status status-loading">Iniciando cámara...</div>
+            <div id="permissionGuide" class="permission-guide" style="display: none;">
+                <h5>🔐 Permisos de Cámara Necesarios</h5>
+                <p><strong>Cómo activar:</strong></p>
+                <ol>
+                    <li><strong>Chrome:</strong> Clic en 🔒 → Configuración → Cámara → Permitir</li>
+                    <li><strong>Firefox:</strong> Clic en 🔒 → Permisos → Cámara → Permitir</li>
+                    <li>Luego recarga la página</li>
+                </ol>
+                <button class="btn btn-primary" onclick="reiniciarConPermisos()">🔄 Reintentar</button>
             </div>
-
             <div id="qrReader" style="width: 100%; min-height: 300px;"></div>
-
-            <div style="text-align: center; margin-top: 20px;">
-                <button onclick="closeQRScanner()" class="btn btn-danger">
-                    ⏹️ Cerrar Escáner
-                </button>
-            </div>
+            <button onclick="closeQRScanner()" class="btn btn-danger">⏹️ Cerrar</button>
         </div>
     </div>
 
-    <!-- Modal Información de Cama -->
     <div id="bedInfoModal" class="modal">
         <div class="modal-content">
-            <h3 style="color: #667eea; margin-bottom: 20px;">
-                🛏️ Información de Cama <span id="modalBedNumber"></span>
-            </h3>
-
+            <h3 style="color: #667eea;">🛏️ Información de Cama <span id="modalBedNumber"></span></h3>
             <div class="info-section">
                 <h4>📋 Datos de la Cama</h4>
-                <div class="info-item">
-                    <strong>Número de Cama:</strong> <span id="infoBedNumber"></span>
-                </div>
-                <div class="info-item">
-                    <strong>Estado:</strong> <span id="infoBedStatus"></span>
-                </div>
-                <div class="info-item">
-                    <strong>ID Cama:</strong> <span id="infoBedId"></span>
-                </div>
+                <div class="info-item"><strong>Número:</strong> <span id="infoBedNumber"></span></div>
+                <div class="info-item"><strong>Estado:</strong> <span id="infoBedStatus"></span></div>
+                <div class="info-item"><strong>ID:</strong> <span id="infoBedId"></span></div>
             </div>
-
             <div class="info-section" id="patientSection" style="display: none;">
-                <h4>👤 Información del Paciente</h4>
-                <div class="info-item">
-                    <strong>Nombre Completo:</strong> <span id="infoPatientName"></span>
-                </div>
-                <div class="info-item">
-                    <strong>CURP:</strong> <span id="infoPatientCurp"></span>
-                </div>
-                <div class="info-item">
-                    <strong>Padecimientos:</strong> <span id="infoPatientAilments"></span>
-                </div>
-                <div class="info-item">
-                    <strong>Estado de Alta:</strong> <span id="infoPatientAlta"></span>
-                </div>
+                <h4>👤 Paciente</h4>
+                <div class="info-item"><strong>Nombre:</strong> <span id="infoPatientName"></span></div>
+                <div class="info-item"><strong>CURP:</strong> <span id="infoPatientCurp"></span></div>
+                <div class="info-item"><strong>Padecimientos:</strong> <span id="infoPatientAilments"></span></div>
+                <div class="info-item"><strong>Alta:</strong> <span id="infoPatientAlta"></span></div>
             </div>
-
-            <div style="text-align: center; margin-top: 20px;">
-                <button onclick="closeBedInfoModal()" class="btn btn-primary">
-                    Cerrar
-                </button>
-            </div>
+            <button onclick="closeBedInfoModal()" class="btn btn-primary">Cerrar</button>
         </div>
+    </div>
+
+    <div class="sync-indicator" id="syncIndicator">
+        <div class="spinner"></div>
+        <span>Actualizando...</span>
     </div>
 
     <script>
-        let html5QrCode;
-        let isScanning = false;
+        let html5QrCode, isScanning = false;
+        let camasAsignadas = [], solicitudesHoy = [];
+        let autoRefreshInterval = null;
 
-        // Inicialización
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
             const token = localStorage.getItem('authToken');
             const IdUser = localStorage.getItem('userId');
-
             if (!token || !IdUser) {
-                alert("❌ No hay sesión activa. Redirigiendo al login...");
+                alert("❌ No hay sesión activa");
                 window.location.href = "../index.html";
                 return;
             }
-
-            getCamas();
+            await PatchToken();
+            await cargarDatos();
+            autoRefreshInterval = setInterval(() => cargarDatos(true), 30000);
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
         });
 
-        // Obtener camas asignadas
+        async function cargarDatos(silent = false) {
+            if (!silent) showSyncIndicator();
+            await Promise.all([getCamas(), getSolicitudes()]);
+            if (!silent) hideSyncIndicator();
+        }
+
+        function showSyncIndicator() {
+            document.getElementById('syncIndicator').classList.add('active');
+        }
+
+        function hideSyncIndicator() {
+            setTimeout(() => document.getElementById('syncIndicator').classList.remove('active'), 500);
+        }
+
         async function getCamas() {
             const token = localStorage.getItem('authToken');
             const IdUser = localStorage.getItem('userId');
-
             try {
                 const response = await fetch(`https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/enfermero/camas/${IdUser}`, {
                     method: 'GET',
@@ -420,17 +391,87 @@
                         'Authorization': `Bearer ${token}`
                     }
                 });
-
                 const data = await response.json();
+                if (!response.ok) throw new Error('Error al obtener camas');
+                camasAsignadas = data.data || [];
+                document.getElementById('totalBeds').innerText = camasAsignadas.length;
+                renderBeds(camasAsignadas);
+            } catch (error) {
+                console.error(error);
+            }
+        }
 
+        async function getSolicitudes() {
+            const token = localStorage.getItem('authToken');
+            const IdUser = localStorage.getItem('userId');
+            try {
+                const response = await fetch(`https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/alertas/enfermero/${IdUser}`, {
+                    method: 'GET',
+                    headers: {
+                        'ngrok-skip-browser-warning': 'true',
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
                 if (!response.ok) {
-                    throw new Error('Error al obtener las camas asignadas');
+                    solicitudesHoy = [];
+                    renderSolicitudes([]);
+                    return;
                 }
+                const data = await response.json();
+                solicitudesHoy = data.data || [];
+                renderSolicitudes(solicitudesHoy);
+                const pendientes = solicitudesHoy.filter(s => !s.atendida).length;
+                const atendidas = solicitudesHoy.filter(s => s.atendida).length;
+                document.getElementById('pendingRequests').innerText = pendientes;
+                document.getElementById('attendedToday').innerText = atendidas;
+            } catch (error) {
+                console.error(error);
+                solicitudesHoy = [];
+                renderSolicitudes([]);
+            }
+        }
 
-                const camas = data.data;
-                document.getElementById('totalBeds').innerText = camas.length;
-                renderBeds(camas);
+        function renderSolicitudes(solicitudes) {
+            const requestsList = document.getElementById('requestsList');
+            if (solicitudes.length === 0) {
+                requestsList.innerHTML = '<div class="empty-state"><p>✅ No hay solicitudes</p></div>';
+                return;
+            }
+            solicitudes.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+            requestsList.innerHTML = solicitudes.map(req => {
+                const fecha = new Date(req.fecha);
+                const diffMin = Math.floor((new Date() - fecha) / 60000);
+                let tiempo = diffMin < 1 ? 'Ahora' : diffMin < 60 ? `${diffMin}min` : `${Math.floor(diffMin/60)}h`;
+                return `
+                    <div class="request-item ${req.atendida ? 'attended' : ''}">
+                        <div class="request-info">
+                            <div class="bed-number">🛏️ Cama ${req.numeroCama || req.camaId}</div>
+                            <div>${fecha.toLocaleTimeString('es-MX')} - Hace ${tiempo}</div>
+                        </div>
+                        <div>
+                            <span class="badge ${req.atendida ? 'badge-attended' : 'badge-pending'}">
+                                ${req.atendida ? 'Atendida' : 'Pendiente'}
+                            </span>
+                            ${!req.atendida ? `<button class="btn btn-success" onclick="marcarAtendida(${req.id})">✓</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
 
+        async function marcarAtendida(alertaId) {
+            const token = localStorage.getItem('authToken');
+            try {
+                const response = await fetch(`https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/alertas/${alertaId}/atender`, {
+                    method: 'PATCH',
+                    headers: {
+                        'ngrok-skip-browser-warning': 'true',
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (response.ok) await getSolicitudes();
             } catch (error) {
                 console.error(error);
             }
@@ -438,139 +479,104 @@
 
         function renderBeds(camas) {
             const bedsGrid = document.getElementById('bedsGrid');
-            bedsGrid.innerHTML = "";
-
             if (camas.length === 0) {
-                bedsGrid.innerHTML = `
-                    <div class="empty-state">
-                        <p>No tienes camas asignadas</p>
-                    </div>`;
+                bedsGrid.innerHTML = '<div class="empty-state"><p>No tienes camas asignadas</p></div>';
                 return;
             }
-
-            camas.forEach(c => {
-                const card = document.createElement('div');
-                card.classList.add('bed-card');
-
-                if (c.ocupada) {
-                    card.classList.add('needs-attention');
+            bedsGrid.innerHTML = camas.map(c => {
+                const pendientes = solicitudesHoy.filter(s => s.camaId === c.id && !s.atendida);
+                const urgente = pendientes.length > 0;
+                let badge = '', tiempo = '';
+                if (urgente) {
+                    const ultima = pendientes[0];
+                    const diffMin = Math.floor((new Date() - new Date(ultima.fecha)) / 60000);
+                    tiempo = `<span class="time-badge">Hace ${diffMin}min</span>`;
+                    badge = `<span class="alert-badge">🔴 ${pendientes.length}</span>`;
                 }
-
-                card.innerHTML = `
-                    <div class="bed-num">Cama ${c.cama}</div>
-                    <div class="patient-info">
-                        <p><strong>ID:</strong> ${c.id}</p>
-                        <p><strong>Estado:</strong> ${c.ocupada ? "Ocupada" : "Libre"}</p>
+                return `
+                    <div class="bed-card ${urgente ? 'urgent' : ''}">
+                        ${badge}
+                        <div class="bed-num">Cama ${c.cama}</div>
+                        <div class="patient-info">
+                            <p><strong>ID:</strong> ${c.id}</p>
+                            <p><strong>Estado:</strong> ${c.ocupada ? "Ocupada" : "Libre"}</p>
+                            ${tiempo}
+                        </div>
                     </div>
                 `;
-
-                bedsGrid.appendChild(card);
-            });
+            }).join('');
         }
 
-        // Abrir escáner QR
         function openQRScanner() {
             document.getElementById('qrScannerModal').classList.add('active');
             initQRScanner();
         }
 
-        // Cerrar escáner QR
         async function closeQRScanner() {
             if (html5QrCode) {
-                try {
-                    await html5QrCode.stop();
-                } catch (err) {
-                    console.error("Error al detener cámara:", err);
-                }
+                try { await html5QrCode.stop(); } catch (err) {}
             }
             document.getElementById('qrScannerModal').classList.remove('active');
             isScanning = false;
         }
 
-        // Inicializar escáner
         async function initQRScanner() {
             try {
-                updateCameraStatus("Solicitando permisos de cámara...", "loading");
-
+                updateCameraStatus("Iniciando cámara...", "loading");
                 html5QrCode = new Html5Qrcode("qrReader");
-
-                const config = {
-                    fps: 30, // Aumentado a 30 FPS para mejor detección
-                    qrbox: { width: 300, height: 300 }, // Área más grande
-                    aspectRatio: 1.0,
-                    disableFlip: false,
-                    experimentalFeatures: {
-                        useBarCodeDetectorIfSupported: true
-                    },
-                    showTorchButtonIfSupported: true,
-                    formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE] // Solo QR codes
-                };
-
                 await html5QrCode.start(
                     { facingMode: "environment" },
-                    config,
-                    (decodedText) => {
-                        onQRCodeScanned(decodedText);
-                    },
-                    (errorMessage) => {
-                        // Errores de escaneo (no críticos)
-                    }
+                    { fps: 30, qrbox: 300 },
+                    (decodedText) => onQRCodeScanned(decodedText),
+                    () => {}
                 );
-
                 isScanning = true;
-                updateCameraStatus("✅ Cámara lista. Enfoca el código QR", "ready");
-
+                updateCameraStatus("✅ Cámara lista", "ready");
             } catch (err) {
-                console.error("Error al iniciar cámara:", err);
-
-                let errorMsg = "❌ No se pudo acceder a la cámara.";
-
+                console.error(err);
                 if (err.name === "NotAllowedError") {
-                    errorMsg = "❌ Permiso de cámara denegado.";
-                } else if (err.name === "NotFoundError") {
-                    errorMsg = "❌ No se encontró ninguna cámara.";
-                } else if (err.name === "NotReadableError") {
-                    errorMsg = "❌ La cámara está siendo usada por otra aplicación.";
+                    document.getElementById("permissionGuide").style.display = "block";
                 }
-
-                updateCameraStatus(errorMsg, "error");
+                updateCameraStatus("❌ Error de cámara", "error");
             }
         }
 
-        // Procesar QR escaneado
+        async function reiniciarConPermisos() {
+            document.getElementById("permissionGuide").style.display = "none";
+            await initQRScanner();
+        }
+
         async function onQRCodeScanned(qrText) {
             if (!isScanning) return;
-
             isScanning = false;
-
             qrText = qrText.trim().toUpperCase();
-            console.log("✅ QR detectado:", qrText);
-
-            // Validar formato CAMA:ID
             if (!qrText.startsWith("CAMA:")) {
-                updateCameraStatus("❌ QR inválido. Debe tener formato CAMA:ID", "error");
+                updateCameraStatus("❌ QR inválido", "error");
                 setTimeout(() => { isScanning = true; }, 2000);
                 return;
             }
-
             const camaId = qrText.split(":")[1];
-
             if (!camaId || isNaN(camaId)) {
-                updateCameraStatus("❌ El código QR no contiene un ID válido.", "error");
+                updateCameraStatus("❌ ID inválido", "error");
                 setTimeout(() => { isScanning = true; }, 2000);
                 return;
             }
-
-            updateCameraStatus("⏳ Consultando información de la cama...", "loading");
-
-            // Obtener información de la cama
+            const tengoPermiso = camasAsignadas.find(c => c.id == camaId);
+            if (!tengoPermiso) {
+                updateCameraStatus("❌ Esta cama NO está asignada a ti", "error");
+                setTimeout(() => { isScanning = true; }, 3000);
+                return;
+            }
             await fetchBedInfo(camaId);
         }
 
-        // Obtener información de la cama
         async function fetchBedInfo(camaId) {
             const token = localStorage.getItem('authToken');
-
+            const tengoPermiso = camasAsignadas.find(c => c.id == camaId);
+            if (!tengoPermiso) {
+                alert("❌ No tienes permiso para ver esta cama");
+                return;
+            }
             try {
                 const response = await fetch(`https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/pc/find-pc/${camaId}`, {
                     method: 'GET',
@@ -580,136 +586,78 @@
                         'Authorization': `Bearer ${token}`
                     }
                 });
-
                 if (!response.ok) {
-                    updateCameraStatus("❌ No se encontró información de la cama.", "error");
+                    updateCameraStatus("❌ No se encontró la cama", "error");
                     setTimeout(() => { isScanning = true; }, 2000);
                     return;
                 }
-
                 const data = await response.json();
-                console.log("Datos de cama:", data);
-
-                // Cerrar escáner y mostrar información
                 await closeQRScanner();
                 showBedInfo(data);
-
             } catch (error) {
-                console.error("Error:", error);
-                updateCameraStatus("❌ Error conectando con el servidor.", "error");
+                console.error(error);
+                updateCameraStatus("❌ Error de conexión", "error");
                 setTimeout(() => { isScanning = true; }, 2000);
             }
         }
 
-        // Mostrar información en modal
         function showBedInfo(response) {
-            // Extraer datos de la respuesta
-            const bedData = response.data;
-            const cama = bedData.cama;
-            const paciente = bedData.paciente;
-
-            // Información de la cama
+            const { cama, paciente } = response.data;
             document.getElementById('modalBedNumber').textContent = cama.cama;
             document.getElementById('infoBedNumber').textContent = cama.cama;
             document.getElementById('infoBedId').textContent = cama.id;
             document.getElementById('infoBedStatus').textContent = cama.ocupada ? "Ocupada" : "Disponible";
-
-            // Información del paciente
             const patientSection = document.getElementById('patientSection');
-            if (paciente && bedData.activo) {
+            if (paciente && response.data.activo) {
                 patientSection.style.display = 'block';
-
-                // Nombre completo del paciente
-                const nombreCompleto = `${paciente.nombre} ${paciente.paterno} ${paciente.materno}`;
-                document.getElementById('infoPatientName').textContent = nombreCompleto;
-
-                // CURP
+                document.getElementById('infoPatientName').textContent = `${paciente.nombre} ${paciente.paterno} ${paciente.materno}`;
                 document.getElementById('infoPatientCurp').textContent = paciente.curp || 'N/A';
-
-                // Padecimientos
-                document.getElementById('infoPatientAilments').textContent = paciente.padecimientos || 'Sin padecimientos registrados';
-
-                // Estado de alta (true/false a texto)
-                document.getElementById('infoPatientAlta').textContent = paciente.alta ? 'Sí, dado de alta' : 'No, aún hospitalizado';
+                document.getElementById('infoPatientAilments').textContent = paciente.padecimientos || 'Sin registro';
+                document.getElementById('infoPatientAlta').textContent = paciente.alta ? 'Sí' : 'No';
             } else {
                 patientSection.style.display = 'none';
             }
-
             document.getElementById('bedInfoModal').classList.add('active');
         }
 
-        // Cerrar modal de información
         function closeBedInfoModal() {
             document.getElementById('bedInfoModal').classList.remove('active');
         }
 
-        // Entrada manual de número de cama
         function manualEntry() {
-            const camaId = prompt("Ingresa el número de la cama (ID):");
-
+            const camaId = prompt("Ingresa el ID de la cama:");
             if (camaId && !isNaN(camaId)) {
                 fetchBedInfo(camaId);
             } else if (camaId) {
-                alert("❌ Por favor ingresa un número válido");
+                alert("❌ Número inválido");
             }
         }
 
-        // Actualizar estado de cámara
         function updateCameraStatus(message, type) {
-            const cameraStatusEl = document.getElementById("cameraStatus");
-            cameraStatusEl.innerHTML = message;
-            cameraStatusEl.classList.remove("status-loading", "status-ready", "status-success", "status-error");
-
-            if (type === "loading") {
-                cameraStatusEl.classList.add("status-loading");
-            } else if (type === "ready") {
-                cameraStatusEl.classList.add("status-ready");
-            } else if (type === "success") {
-                cameraStatusEl.classList.add("status-success");
-            } else if (type === "error") {
-                cameraStatusEl.classList.add("status-error");
-            }
+            const el = document.getElementById("cameraStatus");
+            el.innerHTML = message;
+            el.className = `camera-status status-${type}`;
         }
 
         async function PatchToken() {
             const fcmToken = localStorage.getItem('fcmToken');
             const IdUser = localStorage.getItem('userId');
-
-            const data = {
-                id: IdUser,
-                token: fcmToken
-            };
-
             try {
-                const response = await fetch('https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/enfermero/patch-token', {
+                await fetch('https://liquescent-jazlynn-speculatively.ngrok-free.dev/api/enfermero/patch-token', {
                     method: 'PATCH',
                     headers: { 'ngrok-skip-browser-warning': 'true','Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
+                    body: JSON.stringify({ id: IdUser, token: fcmToken })
                 });
-
-                if (!response.ok) {
-                    console.warn("No se pudo actualizar el token FCM");
-                } else {
-                    console.log("Token FCM actualizado correctamente");
-                }
-
             } catch (error) {
-                console.error("Error en PATCH token FCM:", error);
+                console.error(error);
             }
         }
 
-        PatchToken();
-
         function logout() {
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('userId');
-            localStorage.removeItem('userRole');
-            localStorage.removeItem('fcmToken');
-            localStorage.removeItem('patient_linked_bed');
-            localStorage.removeItem('username');
+            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+            localStorage.clear();
             window.location.href = '../index.html';
         }
     </script>
 </body>
-
 </html>
